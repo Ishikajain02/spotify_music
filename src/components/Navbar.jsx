@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { ReactDOM } from 'react';
 import 'react-bootstrap';
+import 'bootstrap/dist/css/bootstrap.css';
 
 import { FaSearch } from "react-icons/fa";
 import Card from 'react-bootstrap/Card';
@@ -10,7 +11,7 @@ const CLIENT_SECRET = "26ee121de9fc47f19bd140083f6c5685";
 export default function Navbar() {
     const [searchInput , setSearchInput] = useState("");
     const [accessToken , setAccessToken] = useState("");
-    
+    const [album , setAlbum] = useState([]);
     function changeee(event){
          const val = event.target.value;
          setSearchInput(val);
@@ -20,6 +21,7 @@ export default function Navbar() {
             method : 'POST',
             headers:{
                 'Content-Type' :  'application/x-www-form-urlencoded'
+
             },
             body: 'grant_type=client_credentials&client_id=' + CLIENT_ID + '&client_secret='+ CLIENT_SECRET 
         }
@@ -38,23 +40,34 @@ export default function Navbar() {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': 'Bearer' + accessToken
+            'Authorization': 'Bearer ' + accessToken
         }
     }
+    try{
     var artistID = await fetch('https://api.spotify.com/v1/search?q=' + searchInput+ '&type=artist' ,searchParameters )
-    .then(response => response.json())
-    .then(data => {return data.artists.items[0].id })
-    console.log("ARTIST ID is"+artistID)
+   
+    if (!artistID.ok) {
+        throw new Error('Request failed with status ' + artistID.status);
+    } 
+    var artistIDData = await artistID.json();
+        var artistID = artistIDData.artists.items[0].id;
+
+        console.log("ARTIST ID is" + artistID);
 
 //get requests
-var albums = await fetch('https://api.spotify.com/v1/artists/'+ artistID + '/albums' + 'include_groups=album&market=IN&limit=50' ,searchParameters)
- .then(response=> response.json())
- .then(data => {
-    console.log(data);
- })    
-
-
+var returnedAlbums = await fetch('https://api.spotify.com/v1/search?q=remaster%2520track%3ADoxy%2520artist%3AMiles%2520Davis&type=album%2Cartist&market=IN&limit=50' ,searchParameters)
+if (!returnedAlbums.ok) {
+    throw new Error('Request failed with status ' + returnedAlbums.status);
 }
+
+var albumsData = await returnedAlbums.json();
+console.log(albumsData);
+setAlbum(albumsData.items);
+} catch (error) {
+    console.error(error);
+}
+}
+
   return (
     <div>
     <Container >
@@ -69,19 +82,26 @@ var albums = await fetch('https://api.spotify.com/v1/artists/'+ artistID + '/alb
       onChange={changeee}
       />
     </div>
-    </Container>
-    <Container>
-    <Card style={{backgroundColor: 'black', width: '12rem' , color :'white'  }}>
-      <Card.Img variant="top" src="holder.js/100px180" />
-      <Card.Body>
-        <Card.Title>Card Title</Card.Title>
-        <Card.Text>
-          Some quick e
-        </Card.Text>
+    
+    
+
+        { album?.map((album,i) =>{
+                console.log(album);
+            return(
+                <Card style={{backgroundColor: 'black', width: '12rem' , color :'white'  }}>
+                <Card.Img variant="top" src={'#'} />
+                <Card.Body>
+                  <Card.Title>{album.name}</Card.Title>
+                  <Card.Text>
+                    Some quick e
+                  </Card.Text>
+                  
+                </Card.Body>
+              </Card>
+            )
+        })}
         
-      </Card.Body>
-    </Card>
-    </Container>
+        </Container>
     </div>
   )
 }
