@@ -1,14 +1,88 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
+import { ReactDOM } from 'react';
+import 'react-bootstrap';
+
 import { FaSearch } from "react-icons/fa";
+import Card from 'react-bootstrap/Card';
+const CLIENT_ID = "8c544741f29c463b9b613092d5f7fc49";
+const CLIENT_SECRET = "26ee121de9fc47f19bd140083f6c5685";
 export default function Navbar() {
+    const [searchInput , setSearchInput] = useState("");
+    const [accessToken , setAccessToken] = useState("");
+    
+    function changeee(event){
+         const val = event.target.value;
+         setSearchInput(val);
+    }
+    useEffect(() =>{
+        var authParameters ={
+            method : 'POST',
+            headers:{
+                'Content-Type' :  'application/x-www-form-urlencoded'
+            },
+            body: 'grant_type=client_credentials&client_id=' + CLIENT_ID + '&client_secret='+ CLIENT_SECRET 
+        }
+        
+      //API
+      fetch('https://accounts.spotify.com/api/token', authParameters)
+      .then(result => result.json())
+      .then(data => setAccessToken(data.access_token))
+    },[])
+    //Searching
+    async function search(){
+        console.log("Search for " + searchInput);
+    
+    //for artist
+    var searchParameters ={ 
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer' + accessToken
+        }
+    }
+    var artistID = await fetch('https://api.spotify.com/v1/search?q=' + searchInput+ '&type=artist' ,searchParameters )
+    .then(response => response.json())
+    .then(data => {return data.artists.items[0].id })
+    console.log("ARTIST ID is"+artistID)
+
+//get requests
+var albums = await fetch('https://api.spotify.com/v1/artists/'+ artistID + '/albums' + 'include_groups=album&market=IN&limit=50' ,searchParameters)
+ .then(response=> response.json())
+ .then(data => {
+    console.log(data);
+ })    
+
+
+}
   return (
+    <div>
     <Container >
     <div className="search__bar">
       <FaSearch />
-      <input type="text" placeholder="Artists, songs, or podcasts" />
+      <input type="text" placeholder="Artists, songs, or podcasts" 
+      onKeyDown={event =>{
+        if(event.key == "Enter"){
+           search();
+        }
+      }}
+      onChange={changeee}
+      />
     </div>
     </Container>
+    <Container>
+    <Card style={{backgroundColor: 'black', width: '12rem' , color :'white'  }}>
+      <Card.Img variant="top" src="holder.js/100px180" />
+      <Card.Body>
+        <Card.Title>Card Title</Card.Title>
+        <Card.Text>
+          Some quick e
+        </Card.Text>
+        
+      </Card.Body>
+    </Card>
+    </Container>
+    </div>
   )
 }
 const Container = styled.div`
