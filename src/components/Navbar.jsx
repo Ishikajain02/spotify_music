@@ -11,7 +11,8 @@ const CLIENT_SECRET = "26ee121de9fc47f19bd140083f6c5685";
 export default function Navbar() {
     const [searchInput , setSearchInput] = useState("");
     const [accessToken , setAccessToken] = useState("");
-    const [album , setAlbum] = useState([]);
+    const [albums , setAlbum] = useState( [] );
+    
     function changeee(event){
          const val = event.target.value;
          setSearchInput(val);
@@ -50,9 +51,9 @@ export default function Navbar() {
         throw new Error('Request failed with status ' + artistID.status);
     } 
     var artistIDData = await artistID.json();
-        var artistID = artistIDData.artists.items[0].id;
+        var artistID2 = artistIDData.artists.items[0].id;
 
-        console.log("ARTIST ID is" + artistID);
+        console.log("ARTIST ID is" + artistID2);
 
 //get requests
 var returnedAlbums = await fetch('https://api.spotify.com/v1/search?q=remaster%2520track%3ADoxy%2520artist%3AMiles%2520Davis&type=album%2Cartist&market=IN&limit=50' ,searchParameters)
@@ -62,7 +63,7 @@ if (!returnedAlbums.ok) {
 
 var albumsData = await returnedAlbums.json();
 console.log(albumsData);
-setAlbum(albumsData.items);
+setAlbum(albums.items);
 } catch (error) {
     console.error(error);
 }
@@ -75,31 +76,34 @@ setAlbum(albumsData.items);
       <FaSearch />
       <input type="text" placeholder="Artists, songs, or podcasts" 
       onKeyDown={event =>{
-        if(event.key == "Enter"){
+        if(event.key === "Enter"){
            search();
         }
       }}
       onChange={changeee}
       />
     </div>
-    
+    </Container>
+    <Container>
     
 
-        { album?.map((album,i) =>{
-                console.log(album);
-            return(
+      { albums.map((albums,i) =>{
+                console.log(albums);
+              return(
                 <Card style={{backgroundColor: 'black', width: '12rem' , color :'white'  }}>
                 <Card.Img variant="top" src={'#'} />
                 <Card.Body>
-                  <Card.Title>{album.name}</Card.Title>
+                  <Card.Title>{albums.name}</Card.Title>
                   <Card.Text>
                     Some quick e
                   </Card.Text>
                   
                 </Card.Body>
               </Card>
+              )
+      }
             )
-        })}
+        }
         
         </Container>
     </div>
