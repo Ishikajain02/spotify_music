@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import { ReactDOM } from 'react';
 import 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.css';
-
+import Row from 'react-bootstrap/Row';
 import { FaSearch } from "react-icons/fa";
 import Card from 'react-bootstrap/Card';
 const CLIENT_ID = "8c544741f29c463b9b613092d5f7fc49";
@@ -63,7 +63,12 @@ if (!returnedAlbums.ok) {
 
 var albumsData = await returnedAlbums.json();
 console.log(albumsData);
-setAlbum(albumsData.items);
+
+console.log(albumsData.albums.items);
+var data = albumsData.albums.items;
+console.log(data);
+
+setAlbum(data);
 } catch (error) {
     console.error(error);
 }
@@ -81,19 +86,22 @@ setAlbum(albumsData.items);
         }
       }}
       onChange={changeee}
+     
       />
     </div>
     </Container>
     <Container>
     
-
-      { albums.map((albums,i) =>{
-                console.log(albums);
+    <Row className='mx-2 row row-cols-5'style={{marginTop:'1200px'}}>
+      { albums.map((data,i) =>{
+                console.log(data);
+                
               return(
-                <Card style={{backgroundColor: 'black', width: '12rem' , color :'white'  }}>
+
+                <Card style={{backgroundColor: 'black', width: '17rem' , color :'white' ,margin:'15px', marginTop:'0px' }}>
                 <Card.Img variant="top" src={'#'} />
                 <Card.Body>
-                  <Card.Title>{albums.name}</Card.Title>
+                  <Card.Title>{data.name}</Card.Title>
                   <Card.Text>
                     Some quick e
                   </Card.Text>
@@ -104,7 +112,7 @@ setAlbum(albumsData.items);
       }
             )
         }
-        
+        </Row>
         </Container>
     </div>
   )
