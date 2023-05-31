@@ -56,7 +56,7 @@ export default function Navbar() {
         console.log("ARTIST ID is" + artistID2);
 
 //get requests
-var returnedAlbums = await fetch('https://api.spotify.com/v1/search?q=remaster%2520track%3ADoxy%2520artist%3AMiles%2520Davis&type=album%2Cartist&market=IN&limit=50' ,searchParameters)
+var returnedAlbums = await fetch('https://api.spotify.com/v1/artists/'+artistID2+'/albums'+'?include_groups=album&market=IN&limit=50' ,searchParameters)
 if (!returnedAlbums.ok) {
     throw new Error('Request failed with status ' + returnedAlbums.status);
 }
@@ -64,8 +64,8 @@ if (!returnedAlbums.ok) {
 var albumsData = await returnedAlbums.json();
 console.log(albumsData);
 
-console.log(albumsData.albums.items);
-var data = albumsData.albums.items;
+console.log(albumsData.items);
+var data = albumsData.items;
 console.log(data);
 
 setAlbum(data);
@@ -92,19 +92,19 @@ setAlbum(data);
     </Container>
     <Container>
     
-    <Row className='mx-2 row row-cols-5'style={{marginTop:'1200px'}}>
+    <Row className='mx-2 row row-cols-4'style={{marginTop:'30vh'}}>
       { albums.map((data,i) =>{
                 console.log(data);
                 
               return(
 
-                <Card style={{backgroundColor: 'black', width: '17rem' , color :'white' ,margin:'15px', marginTop:'0px' }}>
-                <Card.Img variant="top" src={'#'} />
+                <Card style={{backgroundColor: 'black', width: '12rem',height:'15rem' , color :'white' ,margin:'15px', marginTop:'0px' }}>
+                <Card.Img variant="top" src={data.images[0].url} />
                 <Card.Body>
                   <Card.Title>{data.name}</Card.Title>
-                  <Card.Text>
-                    Some quick e
-                  </Card.Text>
+                 <Card.Text>
+                  
+                 </Card.Text>
                   
                 </Card.Body>
               </Card>
