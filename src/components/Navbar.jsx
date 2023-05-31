@@ -63,7 +63,7 @@ if (!returnedAlbums.ok) {
 
 var albumsData = await returnedAlbums.json();
 console.log(albumsData);
-setAlbum(albums.items);
+setAlbum(albumsData.items);
 } catch (error) {
     console.error(error);
 }
